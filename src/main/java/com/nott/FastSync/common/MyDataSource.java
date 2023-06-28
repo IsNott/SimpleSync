@@ -1,8 +1,6 @@
 package com.nott.FastSync.common;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.nott.FastSync.Application;
-import javafx.scene.chart.PieChart;
 
 import javax.sql.DataSource;
 

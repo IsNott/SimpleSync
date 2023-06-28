@@ -1,0 +1,33 @@
+### Macbook ###
+.DS_Store
+
+### idea ###
+.idea/
+*.iml
+
+### Eclipse ###
+.settings
+.project
+.classpath
+
+### logs ###
+logs
+*.log
+
+### Compiled ###
+bin/
+*.class
+target/
+dist/
+
+### Package ###
+target
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+release.properties
+pom.xml.releaseBackup

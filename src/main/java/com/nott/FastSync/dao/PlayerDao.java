@@ -25,4 +25,11 @@ public class PlayerDao {
             playerDataMapper.insertPlayerData(playerData);
         }
     }
+
+    public void updatePlayerById(PlayerData playerData) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+            PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
+            playerDataMapper.updateById(playerData);
+        }
+    }
 }

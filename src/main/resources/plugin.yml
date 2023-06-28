@@ -1,0 +1,9 @@
+name: FastSync
+main: com.nott.FastSync.Myplugin
+version: 1.0
+description: A plugin for Bukkit and Spigot.
+author: Nott
+#commands:
+#  hello:
+#    description: Say hello to someone.
+#    usage: /<command> [message]
