@@ -5,9 +5,12 @@ import com.nott.fs.dao.PlayerDao;
 import com.nott.fs.listener.EventListener;
 import com.nott.fs.mapper.PlayerDataMapper;
 import org.apache.ibatis.builder.xml.XMLConfigBuilder;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import org.yaml.snakeyaml.Yaml;
@@ -35,10 +38,15 @@ public class MyPlugin extends JavaPlugin{
         // 设置 MyBatis 配置文件路径
         try {
             getLogger().info("ready to load mybatis");
-            xmlConfigBuilder = new XMLConfigBuilder(getResource("mybatis-config.xml"), "development");
-            configuration = xmlConfigBuilder.getConfiguration();
+             xmlConfigBuilder = new XMLConfigBuilder(getResource("mybatis-config.xml"));
+             configuration = xmlConfigBuilder.parse();
+            DataSource dataSource = configuration.getEnvironment().getDataSource();
+            TransactionFactory transactionFactory = new JdbcTransactionFactory();
+            Environment environment = new Environment("development", transactionFactory, dataSource);
+            configuration.setEnvironment(environment);
             factory = new SqlSessionFactoryBuilder().build(configuration);
             sqlSessionFactory = factory;
+//            System.out.println(sqlSessionFactory.getConfiguration());
             playerDao = new PlayerDao(sqlSessionFactory);
             getLogger().info("mybatis loaded");
         } catch (Exception e) {
@@ -46,7 +54,7 @@ public class MyPlugin extends JavaPlugin{
         }
 
         // 注册事件监听器
-        getServer().getPluginManager().registerEvents(new EventListener(playerDao), this);
+        getServer().getPluginManager().registerEvents(new EventListener(playerDao,this), this);
 
         getLogger().info("fs Plugin enabled!");
     }

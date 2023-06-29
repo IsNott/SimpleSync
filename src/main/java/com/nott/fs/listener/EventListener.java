@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author Nott
@@ -18,16 +19,22 @@ public class EventListener implements Listener {
 
     private PlayerDao playerDao;
 
+    private Plugin plugin;
 
     public EventListener(PlayerDao playerDao) {
         this.playerDao = playerDao;
+    }
+
+    public EventListener(PlayerDao playerDao, Plugin plugin) {
+        this.playerDao = playerDao;
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
-
+        plugin.getLogger().info(String.format("player %s join,UUID [%s]",player.getDisplayName(),uuid));
         // 检查数据库中是否存在该玩家的数据
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData == null) {

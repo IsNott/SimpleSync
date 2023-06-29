@@ -14,7 +14,9 @@ public class PlayerDao {
 
     public PlayerData getPlayerDataByUUID(String uuid) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            System.out.println("openSession");
             PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
+            System.out.println(playerDataMapper.toString());
             return playerDataMapper.getPlayerDataByUUID(uuid);
         }
     }
