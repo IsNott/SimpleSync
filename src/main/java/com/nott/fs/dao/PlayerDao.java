@@ -1,7 +1,7 @@
-package com.nott.FastSync.dao;
+package com.nott.fs.dao;
 
-import com.nott.FastSync.entity.PlayerData;
-import com.nott.FastSync.mapper.PlayerDataMapper;
+import com.nott.fs.entity.PlayerData;
+import com.nott.fs.mapper.PlayerDataMapper;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 

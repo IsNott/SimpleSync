@@ -1,7 +1,7 @@
-package com.nott.FastSync.mapper;
+package com.nott.fs.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.nott.FastSync.entity.PlayerData;
+import com.nott.fs.entity.PlayerData;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

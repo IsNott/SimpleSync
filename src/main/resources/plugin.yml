@@ -1,5 +1,5 @@
-name: FastSync
-main: com.nott.FastSync.Myplugin
+name: fs
+main: com.nott.fs.plugins.MyPlugin
 version: 1.0
 description: A plugin for Bukkit and Spigot.
 author: Nott

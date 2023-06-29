@@ -3,10 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.nott.FastSync.mapper.PlayerDataMapper">
+<mapper namespace="com.nott.fs.mapper.PlayerDataMapper">
 
     <!-- 插入玩家数据 -->
-    <insert id="insertPlayer" parameterType="com.nott.FastSync.entity.PlayerData">
+    <insert id="insertPlayer" parameterType="com.nott.fs.entity.PlayerData">
         INSERT INTO sys_player_data (uuid, displayname, health,exp) VALUES (#{uuid}, #{displayname}, #{health}, #{exp})
     </insert>
 

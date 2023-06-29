@@ -1,4 +1,4 @@
-package com.nott.FastSync.common;
+package com.nott.fs.common;
 
 import com.alibaba.druid.pool.DruidDataSource;
 

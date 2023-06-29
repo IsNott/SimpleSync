@@ -1,4 +1,4 @@
-package com.nott.FastSync.utils;
+package com.nott.fs.utils;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
