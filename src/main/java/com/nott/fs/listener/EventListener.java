@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.nott.fs.dao.PlayerDao;
 import com.nott.fs.entity.PlayerData;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +18,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Nott
@@ -69,12 +71,31 @@ public class EventListener implements Listener {
         int foodLevel = player.getFoodLevel();
         PlayerInventory inventory = player.getInventory();
         ItemStack[] storageContents = inventory.getStorageContents();
-        //todo 序列号和反序列化的配置
-        ItemStack.deserialize(null);
+        JSONArray itemArrays = new JSONArray();
+        //todo 序列号和反序列化
         for (ItemStack content : storageContents) {
-            Map<String, Object> serialize = content.serialize();
+            JSONObject itemJson = new JSONObject();
+            int amount = content.getAmount();
+            String name = content.getType().name();
+            short durability = content.getDurability();
+            Map<Enchantment, Integer> map = content.getEnchantments();
+            if(!map.isEmpty()){
+                JSONArray enchArray = new JSONArray();
+                Set<Enchantment> keySet = map.keySet();
+                keySet.forEach(key -> {
+                    JSONObject en = new JSONObject();
+                    en.put("level",map.get(key));
+                    en.put("enchantment",key);
+                    enchArray.add(en);
+                });
+                itemJson.put("enchantmentList",enchArray);
+            }
+            itemJson.put("amount",amount);
+            itemJson.put("durability",durability);
+            itemJson.put("name",name);
+            itemArrays.add(itemJson);
         }
-        String itemsMetaJsonStr = "";
+        String itemsMetaJsonStr = JSON.toJSONString(itemArrays);
         // 更新玩家数据到数据库
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData != null) {
