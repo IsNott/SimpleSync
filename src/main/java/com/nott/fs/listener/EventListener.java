@@ -16,6 +16,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ListIterator;
+import java.util.Map;
 
 /**
  * @author Nott
@@ -47,7 +48,9 @@ public class EventListener implements Listener {
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData == null) {
             // 如果数据不存在，则创建一条新的玩家数据
-            playerData = new PlayerData(uuid, player.getDisplayName(), player.getHealth(), player.getExp());
+            playerData = new PlayerData();
+            playerData.setUUID(uuid);
+            playerData.setDisplayName(player.getDisplayName());
             playerDao.insertPlayerData(playerData);
         } else {
             // 如果数据存在，则从数据库中加载玩家数据并同步到游戏中
@@ -58,25 +61,32 @@ public class EventListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
+        double health = player.getHealth();
+        float exp = player.getExp();
+        String displayName = player.getDisplayName();
         String uuid = player.getUniqueId().toString();
+        int level = player.getLevel();
+        int foodLevel = player.getFoodLevel();
         PlayerInventory inventory = player.getInventory();
-        ListIterator<ItemStack> iterator = inventory.iterator();
-        JSONArray json = new JSONArray();
-        while (iterator.hasNext()){
-            ItemStack next = iterator.next();
-            String metaStr = next.getData().toString();
-            json.add(metaStr);
+        ItemStack[] storageContents = inventory.getStorageContents();
+        //todo 序列号和反序列化的配置
+        ItemStack.deserialize(null);
+        for (ItemStack content : storageContents) {
+            Map<String, Object> serialize = content.serialize();
         }
-        String itemsMetaJsonStr = JSON.toJSONString(json);
+        String itemsMetaJsonStr = "";
         // 更新玩家数据到数据库
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData != null) {
             playerData.setItems(itemsMetaJsonStr);
-            playerData.setHealth(player.getHealth());
-            playerData.setExp(player.getExp());
-            player.setLevel(playerData.getLevel());
-            player.setFoodLevel(playerData.getFoodLevel());
+            playerData.setHealth(health);
+            playerData.setExp(exp);
+            playerData.setLevel(level);
+            playerData.setFoodLevel(foodLevel);
             playerDao.updatePlayerById(playerData);
+        } else {
+            PlayerData newPlayerData = new PlayerData(uuid, exp, health, displayName, level, foodLevel, itemsMetaJsonStr);
+            playerDao.insertPlayerData(newPlayerData);
         }
     }
 
@@ -87,6 +97,9 @@ public class EventListener implements Listener {
         player.setExp(playerData.getExp());
         player.setLevel(playerData.getLevel());
         player.setFoodLevel(playerData.getFoodLevel());
-
+        PlayerInventory inventory = player.getInventory();
+        //todo 同步PlayerInventory
+        String items = playerData.getItems();
+        JSONArray itemArrays = JSON.parseArray(items);
     }
 }
