@@ -1,5 +1,8 @@
 package com.nott.fs.listener;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.nott.fs.dao.PlayerDao;
 import com.nott.fs.entity.PlayerData;
 import org.bukkit.entity.Player;
@@ -7,7 +10,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.MainHand;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.Plugin;
+
+import java.util.ListIterator;
 
 /**
  * @author Nott
@@ -51,12 +59,23 @@ public class EventListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
-
+        PlayerInventory inventory = player.getInventory();
+        ListIterator<ItemStack> iterator = inventory.iterator();
+        JSONArray json = new JSONArray();
+        while (iterator.hasNext()){
+            ItemStack next = iterator.next();
+            String metaStr = next.getData().toString();
+            json.add(metaStr);
+        }
+        String itemsMetaJsonStr = JSON.toJSONString(json);
         // 更新玩家数据到数据库
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData != null) {
+            playerData.setItems(itemsMetaJsonStr);
             playerData.setHealth(player.getHealth());
             playerData.setExp(player.getExp());
+            player.setLevel(playerData.getLevel());
+            player.setFoodLevel(playerData.getFoodLevel());
             playerDao.updatePlayerById(playerData);
         }
     }
@@ -66,5 +85,8 @@ public class EventListener implements Listener {
         player.setDisplayName(playerData.getDisplayName());
         player.setHealth(playerData.getHealth());
         player.setExp(playerData.getExp());
+        player.setLevel(playerData.getLevel());
+        player.setFoodLevel(playerData.getFoodLevel());
+
     }
 }

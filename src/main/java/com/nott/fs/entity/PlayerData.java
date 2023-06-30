@@ -17,6 +17,12 @@ public class PlayerData {
 
     private String displayName;
 
+    private int level;
+
+    private int foodLevel;
+
+    private String items;
+
     public PlayerData(String UUID, String displayName, Double health,Float exp) {
         this.UUID = UUID;
         this.exp = exp;
