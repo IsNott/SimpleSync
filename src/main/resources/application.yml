@@ -1,15 +1,5 @@
-#driverClassName: com.mysql.jdbc.Driver
-#url: jdbc:mysql://localhost:3306/db?useSSL=false&useServerPrepStmts=true&serverTimezone=%2B8
-#username: root
-#password: 1234
-#  # 初始化连接数量
-#initialSize: 5
-#  # 最大连接数
-#maxActive: 10
-#  # 最大等待时间
-#maxWait: 3000
 datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/valley?useSSL=false&useServerPrepStmts=true&serverTimezone=%2B8
+    url: jdbc:mysql://localhost:3306/db?useSSL=false&useServerPrepStmts=true&serverTimezone=%2B8
     username: root
-    password: Long102899.
+    password: localhost

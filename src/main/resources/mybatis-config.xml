@@ -4,70 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
-
-    <!-- 默认使用的环境 ID（比如：default="development"）
-    也就是说我们可以配置多套<environment>环境-->
+    <properties resource="db.properties"/>
     <environments default="development">
-        <!--
-           每个 environment 元素定义的环境 ID
-           -->
         <environment id="development">
-            <!--
-                transactionManager 事务管理器
-                type的值有JDBC和MANAGED
-                    JDBC – 这个配置直接使用了 JDBC 的提交和回滚设施，它依赖从数据源获得的连接来管理事务作用域。
-            -->
             <transactionManager type="JDBC"/>
-            <!--
-              dataSourcedataSource 数据源 dbcp c3p0 druid
-              type="[UNPOOLED|POOLED|JNDI]"
-              POOLED意思有连接池的连接
-              UNPOOLED意思没有连接池的连接
-              -->
-<!--            <dataSource type="POOLED">-->
-<!--                &lt;!&ndash;                JDBC 驱动&ndash;&gt;-->
-<!--                <property name="driver" value="com.mysql.jdbc.Driver" />-->
-<!--                <property name="url" value="jdbc:mysql://118.89.58.244:3306/valley" />-->
-<!--                <property name="username" value="root" />-->
-<!--                <property name="password" value="Long102899." />-->
-
-<!--                &lt;!&ndash;            defaultTransactionIsolationLevel – 默认的连接事务隔离级别。&ndash;&gt;&ndash;&gt;-->
-<!--                &lt;!&ndash;            <property name="defaultTransactionIsolationLevel" value=""/>&ndash;&gt;-->
-
-<!--                &lt;!&ndash;            defaultNetworkTimeout – 等待数据库操作完成的默认网络超时时间（单位：毫秒）&ndash;&gt;&ndash;&gt;-->
-<!--                &lt;!&ndash;            <property name="efaultNetworkTimeout" value=""/>&ndash;&gt;-->
-
-<!--            </dataSource>-->
-            <dataSource type="com.alibaba.druid.pool.DruidDataSource">
-                <property name="driverClassName" value="com.mysql.jdbc.Driver" />
-                <property name="url" value="jdbc:mysql://118.89.58.244:3306/valley" />
+            <dataSource type="POOLED" >
+                <property name="driver" value="com.mysql.cj.jdbc.Driver" />
+                <property name="url" value="jdbc:mysql://localhost:3306/db?useSSL=false" />
                 <property name="username" value="root" />
-                <property name="password" value="Long102899." />
-
-                <!-- 其他 Druid 数据源配置属性 -->
-                <!-- 可以根据需要添加更多属性配置，例如 initialSize、maxActive、minIdle 等 -->
+                <property name="password" value="localhost" />
+                <property name="initialSize" value="5"/>
+                <property name="maxActive" value="10"/>
             </dataSource>
         </environment>
     </environments>
 
     <mappers>
-        <!-- 使用相对于类路径的资源引用 -->
-        <!--        <mapper resource="asia/xiaojiang/mybatis03/dao/UserMapper.xml"/>-->
-        <!-- 使用完全限定资源定位符（URL）
-        不推荐使用
-        <mapper url="E:\JetBrains\mybatis学习\Mybatis-study\Mybatis-03\src\main\java\asia\xiaojiang\mybatis03\dao\UserMapper.xml"/>
-        -->
-
-        <!-- 使用映射器接口实现类的完全限定类名
-         使用注意点：
-            接口和其配置文件必须同名， 必须在同一个包下
-         -->
         <mapper resource="mapper/PlayerMapper.xml" />
-        <!-- 将包内的映射器接口实现全部注册为映射器
-        使用包扫描注意点：
-            接口和其配置文件必须同名， 必须在同一个包下
-        -->
-                <package name="com.nott.fs.mapper"/>
     </mappers>
 
 </configuration>

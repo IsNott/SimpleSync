@@ -2,29 +2,38 @@ package com.nott.fs.dao;
 
 import com.nott.fs.entity.PlayerData;
 import com.nott.fs.mapper.PlayerDataMapper;
+import com.nott.fs.plugins.MyPlugin;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 public class PlayerDao {
     private final SqlSessionFactory sqlSessionFactory;
 
-    public PlayerDao(SqlSessionFactory sqlSessionFactory) {
+    private MyPlugin myPlugin;
+
+    public PlayerDao(SqlSessionFactory sqlSessionFactory,MyPlugin myPlugin) {
         this.sqlSessionFactory = sqlSessionFactory;
+        this.myPlugin = myPlugin;
     }
 
     public PlayerData getPlayerDataByUUID(String uuid) {
+        PlayerDataMapper playerDataMapper = null;
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            System.out.println("openSession");
-            PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
-            System.out.println(playerDataMapper.toString());
-            return playerDataMapper.getPlayerDataByUUID(uuid);
+            playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
+        } catch (Exception e){
+            myPlugin.getLogger().info("get playerData error :"+e.getMessage());
+            throw e;
         }
+        return playerDataMapper.getPlayerDataByUUID(uuid);
     }
 
     public void insertPlayerData(PlayerData playerData) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
             playerDataMapper.insertPlayerData(playerData);
+        } catch (Exception e){
+            myPlugin.getLogger().info("insert playerData error :"+e.getMessage());
+            throw e;
         }
     }
 
@@ -32,6 +41,9 @@ public class PlayerDao {
         try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
             playerDataMapper.updateById(playerData);
+        } catch (Exception e){
+            myPlugin.getLogger().info("update playerData error :"+e.getMessage());
+            throw e;
         }
     }
 }
