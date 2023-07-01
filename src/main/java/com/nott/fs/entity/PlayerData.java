@@ -4,10 +4,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import jdk.nashorn.internal.objects.annotations.Constructor;
 import lombok.Data;
+import lombok.ToString;
 import org.apache.ibatis.annotations.ConstructorArgs;
+import org.bukkit.entity.Player;
 
 @Data
 @TableName("sys_player_data")
+@ToString
 public class PlayerData {
 
     @TableId(value = "uuid")
@@ -25,24 +28,22 @@ public class PlayerData {
 
     private String items;
 
+    private int expToLevel;
+
     public PlayerData() {
 
     }
 
-    public PlayerData(String UUID, String displayName, Double health, Float exp) {
-        this.UUID = UUID;
-        this.exp = exp;
-        this.health = health;
-        this.displayName = displayName;
-    }
 
-    public PlayerData(String UUID, Float exp, Double health, String displayName, int level, int foodLevel, String items) {
-        this.UUID = UUID;
-        this.exp = exp;
-        this.health = health;
-        this.displayName = displayName;
-        this.level = level;
-        this.foodLevel = foodLevel;
-        this.items = items;
+    public PlayerData(Player player){
+        if(player == null){
+            throw new RuntimeException("player cannot be null");
+        }
+        this.UUID = player.getUniqueId().toString();
+        this.exp = player.getExp() >=  0.0F ? player.getExp() : 0;
+        this.displayName = player.getDisplayName();
+        this.expToLevel = (player.getExpToLevel() >= 0 ? player.getExpToLevel() : 0);
+        this.health = player.getHealth();
+        this.foodLevel = player.getFoodLevel() >= 0 ? player.getFoodLevel() : 0;
     }
 }

@@ -114,7 +114,8 @@
                             <mainClass>com.mx.tsp2.netty.client.jmeter.NettyClientSampler</mainClass>
                         </manifest>
                     </archive>
-                    <outputDirectory>C:\Users\Administrator\Desktop\paper\plugins</outputDirectory>
+<!--                    <outputDirectory>C:\Users\Administrator\Desktop\paper\plugins</outputDirectory>-->
+                    <outputDirectory>D:\mc-server\plugins</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>

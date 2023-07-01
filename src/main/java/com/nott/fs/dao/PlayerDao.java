@@ -18,32 +18,52 @@ public class PlayerDao {
 
     public PlayerData getPlayerDataByUUID(String uuid) {
         PlayerDataMapper playerDataMapper = null;
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        SqlSession sqlSession = null;
+        PlayerData playerDataByUUID = null;
+        try {
+            sqlSession = sqlSessionFactory.openSession();
             playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
+            playerDataByUUID = playerDataMapper.getPlayerDataByUUID(uuid);
         } catch (Exception e){
             myPlugin.getLogger().info("get playerData error :"+e.getMessage());
             throw e;
+        } finally {
+            if(sqlSession != null){
+                sqlSession.close();
+            }
         }
-        return playerDataMapper.getPlayerDataByUUID(uuid);
+        return playerDataByUUID;
     }
 
     public void insertPlayerData(PlayerData playerData) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
             PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
             playerDataMapper.insertPlayerData(playerData);
         } catch (Exception e){
             myPlugin.getLogger().info("insert playerData error :"+e.getMessage());
             throw e;
+        } finally {
+            if(sqlSession != null){
+                sqlSession.close();
+            }
         }
     }
 
     public void updatePlayerById(PlayerData playerData) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
+        SqlSession sqlSession = null;
+        try {
+            sqlSession = sqlSessionFactory.openSession(true);
             PlayerDataMapper playerDataMapper = sqlSession.getMapper(PlayerDataMapper.class);
-            playerDataMapper.updateById(playerData);
+            playerDataMapper.updatePlayerByUUID(playerData);
         } catch (Exception e){
             myPlugin.getLogger().info("update playerData error :"+e.getMessage());
             throw e;
+        } finally {
+            if(sqlSession != null){
+                sqlSession.close();
+            }
         }
     }
 }

@@ -5,24 +5,60 @@
 
 <mapper namespace="com.nott.fs.mapper.PlayerDataMapper">
 
+    <resultMap id="playerResultMap" type="com.nott.fs.entity.PlayerData">
+        <id property="UUID" column="uuid" />
+        <result property="exp" column="exp"/>
+        <result property="health" column="health"/>
+        <result property="displayName" column="display_name"/>
+        <result property="level" column="level"/>
+        <result property="foodLevel" column="food_level"/>
+        <result property="items" column="items"/>
+        <result property="expToLevel" column="exp_to_level"/>
+    </resultMap>
+
     <!-- 插入玩家数据 -->
-    <insert id="insertPlayer" parameterType="com.nott.fs.entity.PlayerData">
-        INSERT INTO sys_player_data (uuid, displayname, health,exp) VALUES (#{uuid}, #{displayname}, #{health}, #{exp})
+    <insert id="insertPlayerData" parameterType="com.nott.fs.entity.PlayerData">
+        INSERT INTO sys_player_data (uuid, display_name, health,exp,level,food_level,items,exp_to_level)
+        VALUES (#{UUID}, #{displayName}, #{health}, #{exp},#{level},#{foodLevel},#{items},#{expToLevel})
     </insert>
 
-<!--    &lt;!&ndash; 更新玩家数据 &ndash;&gt;-->
-<!--    <update id="updatePlayer" parameterType="com.example.model.Player">-->
-<!--        UPDATE player SET name = #{name}, level = #{level} WHERE id = #{id}-->
-<!--    </update>-->
+    <!-- 更新玩家数据 -->
+    <update id="updatePlayerByUUID" parameterType="com.nott.fs.entity.PlayerData">
+        UPDATE sys_player_data
+        <trim prefix="set" suffixOverrides=",">
+            <if test="#{displayName} != null">
+                display_name = #{displayName},
+            </if>
+            <if test="#{health} != null">
+                health = #{health},
+            </if>
+            <if test="#{exp} != null">
+                exp = #{exp},
+            </if>
+            <if test="#{level} != null">
+                level = #{level},
+            </if>
+            <if test="#{foodLevel} != null">
+                food_level = #{foodLevel},
+            </if>
+            <if test="#{items} != null">
+                items = #{items},
+            </if>
+            <if test="#{expToLevel} != null">
+                exp_to_level = #{expToLevel},
+            </if>
+        </trim>
+        WHERE uuid = #{UUID}
+    </update>
 
-<!--    &lt;!&ndash; 删除玩家数据 &ndash;&gt;-->
-<!--    <delete id="deletePlayer" parameterType="java.util.UUID">-->
-<!--        DELETE FROM player WHERE id = #{id}-->
-<!--    </delete>-->
+    <!-- 删除玩家数据 -->
+    <delete id="deletePlayer" parameterType="java.lang.String">
+        DELETE FROM sys_player_data WHERE uuid = #{uuid}
+    </delete>
 
-<!--    &lt;!&ndash; 查询玩家数据 &ndash;&gt;-->
-<!--    <select id="getPlayerById" parameterType="java.util.UUID" resultType="com.example.model.Player">-->
-<!--        SELECT id, name, level FROM player WHERE id = #{id}-->
-<!--    </select>-->
+    <!-- 查询玩家数据 -->
+    <select id="getPlayerDataByUUID" parameterType="java.lang.String" resultMap="playerResultMap">
+        SELECT * FROM sys_player_data WHERE uuid = #{uuid}
+    </select>
 
 </mapper>

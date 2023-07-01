@@ -17,13 +17,11 @@ import javax.sql.DataSource;
 public class MyPlugin extends JavaPlugin{
 
     private SqlSessionFactory sqlSessionFactory;
-    private PlayerDao playerDao;
 
     @Override
     public void onEnable() {
         XMLConfigBuilder xmlConfigBuilder;
         Configuration configuration;
-        SqlSessionFactory factory;
 
         // 设置 MyBatis 配置文件路径
         try {
@@ -34,16 +32,18 @@ public class MyPlugin extends JavaPlugin{
             TransactionFactory transactionFactory = new JdbcTransactionFactory();
             Environment environment = new Environment("development", transactionFactory, dataSource);
             configuration.setEnvironment(environment);
-            factory = new SqlSessionFactoryBuilder().build(configuration);
-            sqlSessionFactory = factory;
-            playerDao = new PlayerDao(sqlSessionFactory,this);
-            getLogger().info("mybatis loaded");
+            sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+            getLogger().info("mybatis loaded " + sqlSessionFactory.toString());
         } catch (Exception e) {
             getLogger().info(e.getMessage());
         }
 
+        if(sqlSessionFactory == null){
+            throw new RuntimeException("SqlSessionFactory is null");
+        }
+
         // 注册事件监听器
-        getServer().getPluginManager().registerEvents(new EventListener(playerDao,this), this);
+        getServer().getPluginManager().registerEvents(new EventListener(new PlayerDao(sqlSessionFactory,this),this), this);
 
         getLogger().info("fs Plugin enabled!");
     }
