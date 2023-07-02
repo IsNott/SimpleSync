@@ -30,6 +30,8 @@ public class PlayerData {
 
     private int expToLevel;
 
+    private String armorItems;
+
     public PlayerData() {
 
     }

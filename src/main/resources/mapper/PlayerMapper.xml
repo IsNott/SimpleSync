@@ -14,12 +14,13 @@
         <result property="foodLevel" column="food_level"/>
         <result property="items" column="items"/>
         <result property="expToLevel" column="exp_to_level"/>
+        <result property="armorItems" column="armor_items"/>
     </resultMap>
 
     <!-- 插入玩家数据 -->
     <insert id="insertPlayerData" parameterType="com.nott.fs.entity.PlayerData">
-        INSERT INTO sys_player_data (uuid, display_name, health,exp,level,food_level,items,exp_to_level)
-        VALUES (#{UUID}, #{displayName}, #{health}, #{exp},#{level},#{foodLevel},#{items},#{expToLevel})
+        INSERT INTO sys_player_data (uuid, display_name, health,exp,level,food_level,items,exp_to_level,armor_items)
+        VALUES (#{UUID}, #{displayName}, #{health}, #{exp},#{level},#{foodLevel},#{items},#{expToLevel},#{armorItems})
     </insert>
 
     <!-- 更新玩家数据 -->
@@ -46,6 +47,9 @@
             </if>
             <if test="#{expToLevel} != null">
                 exp_to_level = #{expToLevel},
+            </if>
+            <if test="#{armorItems} != null">
+                armor_items = #{armorItems},
             </if>
         </trim>
         WHERE uuid = #{UUID}
