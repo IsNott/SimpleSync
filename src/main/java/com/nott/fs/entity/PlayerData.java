@@ -32,6 +32,8 @@ public class PlayerData {
 
     private String armorItems;
 
+    private String extraItems;
+
     public PlayerData() {
 
     }

@@ -12,14 +12,14 @@ import org.bukkit.Sound;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
-
-import javax.sound.midi.MetaEventListener;
 import java.util.*;
 
 /**
@@ -43,8 +43,8 @@ public class EventListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onPlayerLogin(PlayerLoginEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
         plugin.getLogger().info(String.format("player %s join,UUID [%s]",player.getDisplayName(),uuid));
@@ -81,9 +81,11 @@ public class EventListener implements Listener {
         PlayerInventory inventory = player.getInventory();
         ItemStack[] storageContents = inventory.getStorageContents();
         ItemStack[] armorContents = inventory.getArmorContents();
+        ItemStack[] extraContents = inventory.getExtraContents();
         ItemStack itemInMainHand = inventory.getItemInMainHand();
         JSONArray itemArrays = new JSONArray();
         JSONArray armorArrays = new JSONArray();
+        JSONArray extraArrays = new JSONArray();
         // set playerData's storageContents
         for (ItemStack content : storageContents) {
            if(content != null){
@@ -98,10 +100,19 @@ public class EventListener implements Listener {
                 armorArrays.add(itemJson);
             }
         }
+        // set extraContents
+        for (ItemStack content : extraContents) {
+            if(content != null){
+                JSONObject itemJson = this.getItemJson(content,null);
+                extraArrays.add(itemJson);
+            }
+        }
         String armorArrayJsonStr = JSON.toJSONString(armorArrays);
         String itemsMetaJsonStr = JSON.toJSONString(itemArrays);
+        String extraArrayJsonStr = JSON.toJSONString(extraArrays);
         plugin.getLogger().info("itemsMetaJsonStr :"+ itemsMetaJsonStr);
         plugin.getLogger().info("armorArrayJsonStr :"+ armorArrayJsonStr);
+        plugin.getLogger().info("extraArrayJsonStr :"+ extraArrayJsonStr);
         // 更新玩家数据到数据库
         PlayerData playerData = playerDao.getPlayerDataByUUID(uuid);
         if (playerData != null) {
@@ -113,6 +124,7 @@ public class EventListener implements Listener {
             playerData.setExpToLevel(expToLevel);
             playerData.setFoodLevel(foodLevel);
             playerData.setArmorItems(armorArrayJsonStr);
+            playerData.setExtraItems(extraArrayJsonStr);
             playerDao.updatePlayerById(playerData);
         }
     }
@@ -185,6 +197,7 @@ public class EventListener implements Listener {
 
         String items = playerData.getItems();
         String armorItem = playerData.getArmorItems();
+        String extraItems = playerData.getExtraItems();
         PlayerInventory inventory = player.getInventory();
         // sync storageContents
         if(StringUtils.isNotEmpty(items)){
@@ -234,7 +247,20 @@ public class EventListener implements Listener {
                     }
                 }
             }
+        }
 
+        if(StringUtils.isNotEmpty(extraItems)){
+            JSONArray itemsArray = JSONArray.parseArray(extraItems);
+            Iterator<Object> iterator = itemsArray.iterator();
+            ArrayList<ItemStack> itemStacks = new ArrayList<>();
+            while (iterator.hasNext()){
+                JSONObject itemJson = (JSONObject) iterator.next();
+                ItemStack itemStack = deserializeFromDb(itemJson);
+                itemStacks.add(itemStack);
+            }
+            if(!itemStacks.isEmpty()){
+                inventory.setExtraContents(itemStacks.toArray(new ItemStack[itemStacks.size()]));
+            }
         }
 
     }
