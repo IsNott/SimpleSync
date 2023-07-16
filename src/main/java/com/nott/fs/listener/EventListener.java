@@ -5,6 +5,7 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.nott.fs.dao.PlayerDao;
 import com.nott.fs.entity.PlayerData;
+import fr.xephi.authme.events.LoginEvent;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -14,8 +15,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -44,7 +43,7 @@ public class EventListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
-    public void onPlayerLogin(PlayerLoginEvent event) {
+    public void onPlayerLogin(LoginEvent event) {
         Player player = event.getPlayer();
         String uuid = player.getUniqueId().toString();
         plugin.getLogger().info(String.format("player %s join,UUID [%s]",player.getDisplayName(),uuid));
@@ -159,7 +158,9 @@ public class EventListener implements Listener {
                 metaJson.put("displayName",meta.getDisplayName());
             }
             if(hasLore){
-                //todo addLore
+                List<String> lore = meta.getLore();
+                JSONArray loreArrays = JSON.parseArray(JSON.toJSONString(lore));
+                metaJson.put("lore",loreArrays);
             }
             if(!unbreakable){
                 short durability = content.getDurability();
@@ -167,11 +168,11 @@ public class EventListener implements Listener {
             }
             itemJson.put("meta",metaJson);
         }
-        if(itemInMainHand != null){
-            if(content.equals(itemInMainHand)){
-                itemJson.put("inHand","Y");
-            }
-        }
+//        if(itemInMainHand != null){
+//            if(content.equals(itemInMainHand)){
+//                itemJson.put("inHand","Y");
+//            }
+//        }
         itemJson.put("amount",amount);
         itemJson.put("name",name);
         return itemJson;
@@ -208,18 +209,18 @@ public class EventListener implements Listener {
                 JSONObject itemJson = (JSONObject) iterator.next();
                 ItemStack itemStack = deserializeFromDb(itemJson);
 
-                if(itemJson.containsKey("inHand") && "Y".equals(itemJson.getString("inHand"))){
-                    itemInHand = itemStack;
-                }
+//                if(itemJson.containsKey("inHand") && "Y".equals(itemJson.getString("inHand"))){
+//                    itemInHand = itemStack;
+//                }
                 itemStacks.add(itemStack);
             }
             if(!itemStacks.isEmpty()){
                 inventory.setContents(itemStacks.toArray(new ItemStack[itemStacks.size()]));
             }
 
-            if(itemInHand != null){
-                inventory.setItemInMainHand(itemInHand);
-            }
+//            if(itemInHand != null){
+//                inventory.setItemInMainHand(itemInHand);
+//            }
         }
         // sync armorContents
         if(StringUtils.isNotEmpty(armorItem)){
@@ -289,6 +290,12 @@ public class EventListener implements Listener {
                         itemMeta.addEnchant(en,enchant.getIntValue("level"),false);
                     }
                 }
+            }
+
+            if(meta.containsKey("lore")){
+                JSONArray lore = meta.getJSONArray("lore");
+                Iterator<Object> iterator = lore.iterator();
+                itemMeta.setLore(meta.getList("lore",String.class));
             }
             plugin.getLogger().info(String.format("current meta [%s]",itemMeta.toString()));
         }

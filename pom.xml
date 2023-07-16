@@ -15,10 +15,10 @@
     </properties>
 
     <repositories>
-        <repository>
-            <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>papermc</id>-->
+<!--            <url>https://repo.papermc.io/repository/maven-public/</url>-->
+<!--        </repository>-->
     </repositories>
 
 
@@ -85,6 +85,12 @@
             <version>2.0</version>
         </dependency>
 
+        <dependency>
+            <groupId>fr.xephi</groupId>
+            <artifactId>authme</artifactId>
+            <version>5.6.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -115,7 +121,7 @@
                         </manifest>
                     </archive>
 <!--                    <outputDirectory>C:\Users\Administrator\Desktop\paper\plugins</outputDirectory>-->
-                    <outputDirectory>D:\mc-server\plugins</outputDirectory>
+<!--                    <outputDirectory>D:\mc-server\plugins</outputDirectory>-->
                 </configuration>
                 <executions>
                     <execution>
